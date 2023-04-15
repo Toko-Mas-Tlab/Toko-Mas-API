@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	jenisbarang "toko_mas_api/domain/jenis_barang"
 
 	"gorm.io/gorm"
 )
@@ -23,5 +24,7 @@ func AutoMigrate(db *gorm.DB) {
 }
 
 func registerModel() []model {
-	return []model{}
+	return []model{
+		{Model: jenisbarang.JenisBarang{}},
+	}
 }

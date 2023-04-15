@@ -1,6 +1,24 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"toko_mas_api/config"
+	"toko_mas_api/database"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
+
+var DB *gorm.DB
+
+func init() {
+	db, err := config.ConnectionDB()
+	if err != nil {
+		panic(err)
+	}
+	DB = db
+
+	database.AutoMigrate(db)
+}
 
 func main() {
 	r := gin.Default()

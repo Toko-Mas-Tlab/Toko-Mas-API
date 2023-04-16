@@ -39,14 +39,20 @@ func (h *JenisBarangHandlers) AddNewType(c *gin.Context) {
 }
 
 func (h *JenisBarangHandlers) ListJenisBarang(c *gin.Context) {
-	res, err := h.service.GetAll()
+	sort := c.Query("sort")
+	if sort == "" {
+		sort = "desc"
+	}
+
+	res, err := h.service.GetAll(sort)
 	if err != nil {
 		jsonResponse := helper.ApiResponse("Internal ServerError", err)
 		c.JSON(http.StatusInternalServerError, jsonResponse)
 		return
 	}
 
-	jsonResponse := helper.ApiResponse("List of Type", res)
+	formatter := jenisbarang.ResponseFormatter(res)
+	jsonResponse := helper.ApiResponse("List of Type", formatter)
 	c.JSON(http.StatusOK, jsonResponse)
 }
 

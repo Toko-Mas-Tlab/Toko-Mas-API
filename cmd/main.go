@@ -7,9 +7,6 @@ import (
 	jenisbarang "toko_mas_api/domain/jenis_barang"
 	"toko_mas_api/routes"
 
-	// jenisbarang "toko_mas_api/domain/jenis_barang"
-	// "toko_mas_api/routes"
-
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -35,15 +32,5 @@ func main() {
 
 	routes.Routes(DB, r)
 
-	r.Run() // listen and serve on 0.0.0.0:8080
-
-	// tokenString, err := anggota.Login("admin", "password123")
-	// if err != nil {
-	// 	fmt.Println("Login gagal:", err)
-	// 	return
-	// }
-
-	// Cetak token JWT
-	// fmt.Println("Token JWT:", tokenString)
-
+	r.Run()
 }

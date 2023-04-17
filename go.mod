@@ -1,6 +1,6 @@
 module toko_mas_api
 
-go 1.18
+go 1.19
 
 require (
 	github.com/bytedance/sonic v1.8.7 // indirect

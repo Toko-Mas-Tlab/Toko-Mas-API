@@ -25,9 +25,15 @@ func NewAnggotaService(repository IRepository) *service {
 func (s *service) Register(input Inputan) (Anggota, error) {
 	res := Anggota{}
 
+	//enkripsi password
+	passwordHash, errHash := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
+	if errHash != nil {
+		return res, errHash
+	}
+
 	res.NamaLengkap = input.NamaLengkap
 	res.Username = input.Username
-	res.Password = input.Password
+	res.Password = string(passwordHash)
 	res.NoHp = input.NoHp
 	res.TanggalMasuk = time.Now()
 	res.Status = input.Status

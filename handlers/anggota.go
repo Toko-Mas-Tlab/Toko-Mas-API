@@ -31,3 +31,19 @@ func (h *AnggotaHandlers) Register(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, res)
 }
+func (h *AnggotaHandlers) Login(c *gin.Context) {
+	// Parse JSON request body into Inplogin struct
+	var loginReq anggota.InpLogin
+	err := c.BindJSON(&loginReq)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// Check if username and password are valid
+	if loginReq.Username == "myusername" && loginReq.Password == "mypassword" {
+		c.JSON(http.StatusOK, gin.H{"message": "Login successful!"})
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
+	}
+}

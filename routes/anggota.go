@@ -20,6 +20,7 @@ func routeAnggota(DB *gorm.DB, r *gin.Engine) *gin.RouterGroup {
 	route := r.Group("/anggota")
 	{
 		route.POST("", anggotaHandler.Register)
+		route.POST("/login", anggotaHandler.Login)
 		// route.GET("", jBarangHandler.ListAnggota)
 		// route.PUT("/:id_jenis_barang", jBarangHandler.UpdateAnggota)
 	}

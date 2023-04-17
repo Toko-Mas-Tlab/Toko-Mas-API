@@ -6,6 +6,7 @@ type IRepository interface {
 	Insert(data Anggota) (Anggota, error)
 	ReadAll() ([]Anggota, error)
 	ReadById(id int) (Anggota, error)
+	ReadByUsername(username string) (Anggota, error)
 	Update(data Anggota) (Anggota, error)
 	// Delete(data Anggota) (Anggota, error)
 }
@@ -47,6 +48,17 @@ func (r *repository) ReadById(id int) (Anggota, error) {
 	}
 
 	return data, nil
+}
+
+func (r *repository) ReadByUsername(username string) (Anggota, error) {
+	var anggota Anggota
+
+	err := r.DB.Where("username = ?", username).Find(&anggota).Error
+	if err != nil {
+		return Anggota{}, err
+	}
+
+	return anggota, nil
 }
 
 func (r *repository) Update(data Anggota) (Anggota, error) {

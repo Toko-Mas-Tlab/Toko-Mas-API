@@ -17,19 +17,17 @@ func NewAnggotaHandler(service anggota.IService) *AnggotaHandlers {
 
 func (h *AnggotaHandlers) Register(c *gin.Context) {
 	var input anggota.Inputan
+
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "inputan tidak sesuai",
-		})
+		c.AbortWithStatusJSON(http.StatusBadRequest, err)
 		return
 	}
-	result, err := h.service.Register(input)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "error service",
-		})
+
+	res, errS := h.service.Register(input)
+	if errS != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, errS)
 		return
 	}
-	c.JSON(http.StatusCreated, result)
+	c.JSON(http.StatusCreated, res)
 }

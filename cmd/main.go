@@ -1,8 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"toko_mas_api/config"
-	"toko_mas_api/database"
+	"toko_mas_api/domain/anggota"
+	jenisbarang "toko_mas_api/domain/jenis_barang"
+	"toko_mas_api/routes"
+
+	// jenisbarang "toko_mas_api/domain/jenis_barang"
+	// "toko_mas_api/routes"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -17,15 +23,27 @@ func init() {
 	}
 	DB = db
 
-	database.AutoMigrate(db)
+	err = db.AutoMigrate(&jenisbarang.JenisBarang{}, &anggota.Anggota{})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Migration OK!")
 }
 
 func main() {
 	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+
+	routes.Routes(DB, r)
+
 	r.Run() // listen and serve on 0.0.0.0:8080
+
+	// tokenString, err := anggota.Login("admin", "password123")
+	// if err != nil {
+	// 	fmt.Println("Login gagal:", err)
+	// 	return
+	// }
+
+	// Cetak token JWT
+	// fmt.Println("Token JWT:", tokenString)
+
 }

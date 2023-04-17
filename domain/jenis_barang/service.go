@@ -7,7 +7,7 @@ import (
 
 type IService interface {
 	Add(input Inputan) (JenisBarang, error)
-	GetAll() ([]JenisBarang, error)
+	GetAll(sort string) ([]JenisBarang, error)
 	Update(id int, input Inputan) (JenisBarang, error)
 }
 
@@ -35,8 +35,8 @@ func (s *service) Add(input Inputan) (JenisBarang, error) {
 	return res, nil
 }
 
-func (s *service) GetAll() ([]JenisBarang, error) {
-	res, err := s.repository.ReadAll()
+func (s *service) GetAll(sort string) ([]JenisBarang, error) {
+	res, err := s.repository.ReadAll(sort)
 	if err != nil {
 		return []JenisBarang{}, err
 	}

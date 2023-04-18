@@ -5,6 +5,7 @@ import (
 	"toko_mas_api/config"
 	"toko_mas_api/domain/anggota"
 	jenisbarang "toko_mas_api/domain/jenis_barang"
+	"toko_mas_api/middleware"
 	"toko_mas_api/routes"
 
 	"github.com/gin-gonic/gin"
@@ -29,6 +30,8 @@ func init() {
 
 func main() {
 	r := gin.Default()
+
+	r.Use(middleware.CORDMiddleware())
 
 	routes.Routes(DB, r)
 

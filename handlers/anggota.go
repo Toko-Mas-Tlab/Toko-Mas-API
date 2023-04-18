@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"toko_mas_api/domain/anggota"
 	"toko_mas_api/helper"
@@ -47,6 +48,11 @@ func (h *AnggotaHandlers) Login(c *gin.Context) {
 	res, errS := h.service.Login(input)
 	if errS != nil {
 		c.AbortWithStatusJSON(400, errS)
+		return
+	}
+	if res.ID == 0 {
+		c.AbortWithStatusJSON(400, errors.New("user not found"))
+		return
 	}
 
 	accessToken, errToken := h.jwtService.GenerateTokenJWT(res.ID, res.Username, 10, "ACCESS_TOKEN")

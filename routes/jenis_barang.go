@@ -3,6 +3,7 @@ package routes
 import (
 	jenisbarang "toko_mas_api/domain/jenis_barang"
 	"toko_mas_api/handlers"
+	"toko_mas_api/middleware"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -13,7 +14,7 @@ func routeJenisBarang(DB *gorm.DB, r *gin.Engine) *gin.RouterGroup {
 	jBarangService := jenisbarang.NewJenisBarangService(jBarangRepo)
 	jBarangHandler := handlers.NewJenisBarangHandler(jBarangService)
 
-	route := r.Group("/jenis-barang")
+	route := r.Group("/jenis-barang", middleware.AuthMiddleware())
 	{
 		route.POST("", jBarangHandler.AddNewType)
 		route.GET("", jBarangHandler.ListJenisBarang)

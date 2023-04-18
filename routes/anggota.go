@@ -17,7 +17,7 @@ func routeAnggota(DB *gorm.DB, r *gin.Engine) *gin.RouterGroup {
 	anggotaHandler := handlers.NewAnggotaHandler(anggotaService, jwtService)
 
 	r.POST("/login", anggotaHandler.Login)
-	route := r.Group("/anggota")
+	route := r.Group("/anggota", middleware.AuthMiddleware())
 	{
 		route.POST("", anggotaHandler.Register)
 		// route.GET("", jBarangHandler.ListAnggota)

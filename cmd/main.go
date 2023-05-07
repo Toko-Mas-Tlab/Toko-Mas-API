@@ -8,6 +8,8 @@ import (
 	"toko_mas_api/middleware"
 	"toko_mas_api/routes"
 
+	bentukbarang "toko_mas_api/domain/bentuk_barang"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -21,7 +23,11 @@ func init() {
 	}
 	DB = db
 
-	err = db.AutoMigrate(&jenisbarang.JenisBarang{}, &anggota.Anggota{})
+	err = db.AutoMigrate(
+		&jenisbarang.JenisBarang{},
+		&anggota.Anggota{},
+		&bentukbarang.BentukBarang{},
+	)
 	if err != nil {
 		panic(err)
 	}

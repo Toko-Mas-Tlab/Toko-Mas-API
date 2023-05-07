@@ -9,7 +9,7 @@ type Anggota struct {
 	NamaLengkap  string    `gorm:"type:varchar(255);not null"`
 	Username     string    `gorm:"type:varchar(50);not null;unique"`
 	Password     string    `gorm:"type:varchar(255)"`
-	NoHp         string    `gorm:"type:varchar(20)"`
+	NoHp         string    `gorm:"type:varchar(20);unique"`
 	TanggalMasuk time.Time `gorm:"type:timestamp;not null"`
 	Status       string    `sql:"type:ENUM('Aktif', 'No-Aktif')" gorm:"column:status_type;not null"`
 	CreatedAt    time.Time

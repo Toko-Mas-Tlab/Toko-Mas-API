@@ -10,6 +10,7 @@ func Routes(DB *gorm.DB, r *gin.Engine) []*gin.RouterGroup {
 
 	routes = append(routes, routeJenisBarang(DB, r))
 	routes = append(routes, routeAnggota(DB, r))
+	routes = append(routes, routeBentukBarang(DB, r))
 
 	return routes
 }

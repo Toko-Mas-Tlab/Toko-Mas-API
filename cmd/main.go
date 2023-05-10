@@ -1,11 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"toko_mas_api/config"
 	"toko_mas_api/domain/anggota"
-	jenisbarang "toko_mas_api/domain/jenis_barang"
-	"toko_mas_api/routes"
+	"toko_mas_api/handlers"
+	"toko_mas_api/middleware"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -20,18 +19,27 @@ func init() {
 	}
 	DB = db
 
-	err = db.AutoMigrate(&jenisbarang.JenisBarang{}, &anggota.Anggota{})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Migration OK!")
+	// err = db.AutoMigrate(&jenisbarang.JenisBarang{}, &anggota.Anggota{})
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("Migration OK!")
 }
 
 func main() {
-	r := gin.Default()
+	config.ConnectionDB()
+	anggotaRepo := anggota.NewAnggotaRepository(DB)
+	anggotaService := anggota.NewAnggotaService(anggotaRepo)
+	authService := middleware.NewService()
+	anggotaHandler := handlers.NewAnggotaHandler(anggotaService, authService)
 
-	routes.Routes(DB, r)
+	router := gin.Default()
+	api := router.Group("/v1/anggota")
+	api.POST("register", anggotaHandler.Register)
+	api.POST("login", anggotaHandler.Login)
 
-	r.Run() // listen and serve on 0.0.0.0:8080
+	// routes.Routes(DB, r)
+
+	router.Run() // listen and serve on 0.0.0.0:8080
 
 }

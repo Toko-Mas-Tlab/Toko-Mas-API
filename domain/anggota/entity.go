@@ -19,15 +19,14 @@ type Anggota struct {
 }
 
 type Inputan struct {
-	NamaLengkap  string `json:"nama_lengkap" binding:"required"`
-	Username     string `json:"username" binding:"required"`
-	Password     string `json:"password" binding:"required"`
-	NoHp         string `json:"no_hp" binding:"required"`
-	TanggalMasuk string `json:"tanggal_masuk" binding:"required"`
-	Status       string `json:"status" binding:"required"`
+	NamaLengkap string `json:"nama_lengkap" binding:"required"`
+	Username    string `json:"username" binding:"required"`
+	Password    string `json:"password" binding:"required"`
+	NoHp        string `json:"no_hp" binding:"required"`
+	Status      string `json:"status" binding:"required"`
 }
 
-type InpLogin struct {
+type InputLogin struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }

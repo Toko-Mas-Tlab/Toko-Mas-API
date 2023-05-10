@@ -10,14 +10,16 @@ import (
 )
 
 func routeAnggota(DB *gorm.DB, r *gin.Engine) *gin.RouterGroup {
-	jwtService := middleware.NewService()
+	// jwtService := middleware.NewService()
 
 	anggotaRepo := anggota.NewAnggotaRepository(DB)
 	anggotaService := anggota.NewAnggotaService(anggotaRepo)
-	anggotaHandler := handlers.NewAnggotaHandler(anggotaService, jwtService)
+	authService := middleware.NewService()
+	anggotaHandler := handlers.NewAnggotaHandler(anggotaService, authService)
 
-	r.POST("/login", anggotaHandler.Login)
-	route := r.Group("/anggota")
+	router := gin.Default()
+	// r.POST("/login", anggotaHandler.Login)
+	route := router.Group("/anggota")
 	{
 		route.POST("", anggotaHandler.Register)
 		// route.GET("", jBarangHandler.ListAnggota)

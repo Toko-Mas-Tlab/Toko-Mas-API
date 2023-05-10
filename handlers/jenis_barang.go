@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 	jenisbarang "toko_mas_api/domain/jenis_barang"
 	"toko_mas_api/helper"
 
@@ -22,65 +21,67 @@ func (h *JenisBarangHandlers) AddNewType(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		jsonResponse := helper.ApiResponse("Bad Request", err)
-		c.JSON(http.StatusBadRequest, jsonResponse)
+		// jsonResponse := helper.ApiResponse("Bad Request", err)
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
 	res, errService := h.service.Add(input)
 	if errService != nil {
-		jsonResponse := helper.ApiResponse("Internal Server Error", errService)
-		c.JSON(http.StatusInternalServerError, jsonResponse)
+		// jsonResponse := helper.ApiResponse("Internal Server Error", errService)
+		c.JSON(http.StatusInternalServerError, errService)
 		return
 	}
+	response := helper.ApiResponseJson("Account has been registered", http.StatusCreated, "success", res)
+	c.JSON(http.StatusCreated, response)
 
-	jsonResponse := helper.ApiResponse("Created", res)
-	c.JSON(http.StatusCreated, jsonResponse)
+	// jsonResponse := helper.ApiResponse("Created", res)
+	// c.JSON(http.StatusCreated, jsonResponse)
 }
 
-func (h *JenisBarangHandlers) ListJenisBarang(c *gin.Context) {
-	res, err := h.service.GetAll()
-	if err != nil {
-		jsonResponse := helper.ApiResponse("Internal ServerError", err)
-		c.JSON(http.StatusInternalServerError, jsonResponse)
-		return
-	}
+// func (h *JenisBarangHandlers) ListJenisBarang(c *gin.Context) {
+// 	res, err := h.service.GetAll()
+// 	if err != nil {
+// 		jsonResponse := helper.ApiResponse("Internal ServerError", err)
+// 		c.JSON(http.StatusInternalServerError, jsonResponse)
+// 		return
+// 	}
 
-	jsonResponse := helper.ApiResponse("List of Type", res)
-	c.JSON(http.StatusOK, jsonResponse)
-}
+// 	jsonResponse := helper.ApiResponse("List of Type", res)
+// 	c.JSON(http.StatusOK, jsonResponse)
+// }
 
-func (h *JenisBarangHandlers) UpdateJenisBarang(c *gin.Context) {
-	var input jenisbarang.Inputan
+// func (h *JenisBarangHandlers) UpdateJenisBarang(c *gin.Context) {
+// 	var input jenisbarang.Inputan
 
-	id, err := strconv.Atoi(c.Param("id_jenis_barang"))
-	if err != nil {
-		jsonResponse := helper.ApiResponse("Bad Request", err)
-		c.JSON(http.StatusBadRequest, jsonResponse)
-		return
-	}
+// 	id, err := strconv.Atoi(c.Param("id_jenis_barang"))
+// 	if err != nil {
+// 		jsonResponse := helper.ApiResponse("Bad Request", err)
+// 		c.JSON(http.StatusBadRequest, jsonResponse)
+// 		return
+// 	}
 
-	errBinding := c.ShouldBindJSON(&input)
-	if errBinding != nil {
-		jsonResponse := helper.ApiResponse("Bad Request", errBinding)
-		c.JSON(http.StatusBadRequest, jsonResponse)
-		return
-	}
+// 	errBinding := c.ShouldBindJSON(&input)
+// 	if errBinding != nil {
+// 		jsonResponse := helper.ApiResponse("Bad Request", errBinding)
+// 		c.JSON(http.StatusBadRequest, jsonResponse)
+// 		return
+// 	}
 
-	res, errUpdate := h.service.Update(id, input)
-	if err != nil {
-		jsonResponse := helper.ApiResponse("Internal Server Error", errUpdate)
-		c.JSON(http.StatusInternalServerError, jsonResponse)
-		return
-	}
-	if res.ID == 0 {
-		c.AbortWithStatusJSON(http.StatusNotFound, helper.ErrorResponse{
-			Status:  http.StatusNotFound,
-			Message: "ID Not Found",
-		})
-		return
-	}
+// 	res, errUpdate := h.service.Update(id, input)
+// 	if err != nil {
+// 		jsonResponse := helper.ApiResponse("Internal Server Error", errUpdate)
+// 		c.JSON(http.StatusInternalServerError, jsonResponse)
+// 		return
+// 	}
+// 	if res.ID == 0 {
+// 		c.AbortWithStatusJSON(http.StatusNotFound, helper.ErrorResponse{
+// 			Status:  http.StatusNotFound,
+// 			Message: "ID Not Found",
+// 		})
+// 		return
+// 	}
 
-	jsonResponse := helper.ApiResponse("Updated", res)
-	c.JSON(http.StatusCreated, jsonResponse)
-}
+// 	jsonResponse := helper.ApiResponse("Updated", res)
+// 	c.JSON(http.StatusCreated, jsonResponse)
+// }

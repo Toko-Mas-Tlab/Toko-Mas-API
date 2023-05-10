@@ -16,8 +16,8 @@ func routeJenisBarang(DB *gorm.DB, r *gin.Engine) *gin.RouterGroup {
 	route := r.Group("/jenis-barang")
 	{
 		route.POST("", jBarangHandler.AddNewType)
-		route.GET("", jBarangHandler.ListJenisBarang)
-		route.PUT("/:id_jenis_barang", jBarangHandler.UpdateJenisBarang)
+		// route.GET("", jBarangHandler.ListJenisBarang)
+		// route.PUT("/:id_jenis_barang", jBarangHandler.UpdateJenisBarang)
 	}
 
 	return route

@@ -9,7 +9,7 @@ import (
 
 type IService interface {
 	Register(input Inputan) (Anggota, error)
-	Login(input InpLogin) (Anggota, error)
+	Login(input InputLogin) (Anggota, error)
 	GetAll() ([]Anggota, error)
 	Update(id int, input Inputan) (Anggota, error)
 }
@@ -23,30 +23,29 @@ func NewAnggotaService(repository IRepository) *service {
 }
 
 func (s *service) Register(input Inputan) (Anggota, error) {
-	res := Anggota{}
+	user := Anggota{}
+
+	user.NamaLengkap = input.NamaLengkap
+	user.Username = input.Username
 
 	//enkripsi password
 	passwordHash, errHash := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
 	if errHash != nil {
-		return res, errHash
+		return user, errHash
 	}
+	user.Password = string(passwordHash)
+	user.NoHp = input.NoHp
+	user.Status = input.Status
 
-	res.NamaLengkap = input.NamaLengkap
-	res.Username = input.Username
-	res.Password = string(passwordHash)
-	res.NoHp = input.NoHp
-	res.TanggalMasuk = time.Now()
-	res.Status = input.Status
-
-	res, err := s.repository.Insert(res)
+	newUser, err := s.repository.Save(user)
 	if err != nil {
-		return res, err
+		return newUser, err
 	}
 
-	return res, nil
+	return newUser, nil
 }
 
-func (s *service) Login(input InpLogin) (Anggota, error) {
+func (s *service) Login(input InputLogin) (Anggota, error) {
 	username := input.Username
 	password := input.Password
 
@@ -57,9 +56,10 @@ func (s *service) Login(input InpLogin) (Anggota, error) {
 
 	//cek jika user tidak ada
 	if user.ID == 0 {
-		return user, errors.New("no user found")
+		return user, errors.New("No user found")
 	}
 
+	//cek password
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		return user, err

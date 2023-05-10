@@ -3,7 +3,7 @@ package anggota
 import "gorm.io/gorm"
 
 type IRepository interface {
-	Insert(data Anggota) (Anggota, error)
+	Save(data Anggota) (Anggota, error)
 	ReadAll() ([]Anggota, error)
 	ReadById(id int) (Anggota, error)
 	ReadByUsername(username string) (Anggota, error)
@@ -19,7 +19,7 @@ func NewAnggotaRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func (r *repository) Insert(data Anggota) (Anggota, error) {
+func (r *repository) Save(data Anggota) (Anggota, error) {
 	err := r.DB.Create(&data).Error
 	if err != nil {
 		return data, err

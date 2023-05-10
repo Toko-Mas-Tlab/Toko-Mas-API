@@ -9,51 +9,80 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AnggotaHandlers struct {
+type anggotaHandlers struct {
 	service    anggota.IService
 	jwtService middleware.IService
 }
 
-func NewAnggotaHandler(service anggota.IService, jwtService middleware.IService) *AnggotaHandlers {
-	return &AnggotaHandlers{service, jwtService}
+func NewAnggotaHandler(service anggota.IService, jwtService middleware.IService) *anggotaHandlers {
+	return &anggotaHandlers{service, jwtService}
 }
 
-func (h *AnggotaHandlers) Register(c *gin.Context) {
+func (h *anggotaHandlers) Register(c *gin.Context) {
 	var input anggota.Inputan
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err)
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.ApiResponseJson("Register account failed", http.StatusBadRequest, "error", errorMessage)
+		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	res, errS := h.service.Register(input)
 	if errS != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errS)
+		response := helper.ApiResponseJson("Register account failed", http.StatusBadRequest, "error", err.Error())
+		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	c.JSON(http.StatusCreated, res)
+	token, err := h.jwtService.GenerateTokenJWT(res.ID, res.Username, 10, "ACCESS_TOKEN")
+	if errS != nil {
+		response := helper.ApiResponseJson("Register account failed", http.StatusBadRequest, "error", err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := anggota.FormatRegister(res, token)
+
+	response := helper.ApiResponseJson("Account has been registered", http.StatusCreated, "success", formatter)
+	c.JSON(http.StatusCreated, response)
 }
 
-func (h *AnggotaHandlers) Login(c *gin.Context) {
-	var input anggota.InpLogin
+func (h *anggotaHandlers) Login(c *gin.Context) {
+	var input anggota.InputLogin
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err)
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.ApiResponseJson("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 
 	res, errS := h.service.Login(input)
 	if errS != nil {
-		c.AbortWithStatusJSON(400, errS)
-	}
+		errorMessage := gin.H{"errors": err.Error()}
 
-	accessToken, errToken := h.jwtService.GenerateTokenJWT(res.ID, res.Username, 10, "ACCESS_TOKEN")
-	if errToken != nil {
-		c.AbortWithStatusJSON(400, errToken)
+		response := helper.ApiResponseJson("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+	token, err := h.jwtService.GenerateTokenJWT(res.ID, res.Username, 10, "ACCESS_TOKEN")
+	if errS != nil {
+		response := helper.ApiResponseJson("Login failed", http.StatusBadRequest, "error", err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// accessToken, errToken := h.jwtService.GenerateTokenJWT(res.ID, res.Username, 10, "ACCESS_TOKEN")
+	// if errToken != nil {
+	// 	c.AbortWithStatusJSON(400, errToken)
+	// 	return
+	// }
 
 	refreshToken, errToken := h.jwtService.GenerateTokenJWT(res.ID, res.Username, 10, "REFRESH_TOKEN")
 	if errToken != nil {
@@ -64,7 +93,8 @@ func (h *AnggotaHandlers) Login(c *gin.Context) {
 	// set Cookie
 	c.SetCookie("refresh_token", refreshToken, 3600*12, "/", "", true, true)
 
-	resData := anggota.LoginResponseFormatter(res, accessToken)
-	response := helper.ApiResponse("Berhasil Login", resData)
+	formatter := anggota.LoginResponseFormatter(res, token)
+	response := helper.ApiResponseJson("Successfully login", http.StatusOK, "success", formatter)
+
 	c.JSON(http.StatusOK, response)
 }

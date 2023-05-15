@@ -98,3 +98,15 @@ func (h *anggotaHandlers) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *anggotaHandlers) ListAnggota(c *gin.Context) {
+	res, err := h.service.GetAll()
+	if err != nil {
+		jsonResponse := helper.ApiResponse("Internal ServerError", err)
+		c.JSON(http.StatusInternalServerError, jsonResponse)
+		return
+	}
+
+	jsonResponse := helper.ApiResponse("List of Type", res)
+	c.JSON(http.StatusOK, jsonResponse)
+}

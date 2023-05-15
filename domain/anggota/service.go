@@ -2,7 +2,6 @@ package anggota
 
 import (
 	"errors"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -11,7 +10,7 @@ type IService interface {
 	Register(input Inputan) (Anggota, error)
 	Login(input InputLogin) (Anggota, error)
 	GetAll() ([]Anggota, error)
-	Update(id int, input Inputan) (Anggota, error)
+	// Update(id int, input Inputan) (Anggota, error)
 }
 
 type service struct {
@@ -69,35 +68,35 @@ func (s *service) Login(input InputLogin) (Anggota, error) {
 }
 
 func (s *service) GetAll() ([]Anggota, error) {
-	res, err := s.repository.ReadAll()
+	user, err := s.repository.ReadAll()
 	if err != nil {
 		return []Anggota{}, err
 	}
 
-	return res, nil
+	return user, nil
 }
 
-func (s *service) Update(id int, input Inputan) (Anggota, error) {
-	res, err := s.repository.ReadById(id)
-	if err != nil {
-		return res, err
-	}
-	if res.ID == 0 {
-		return res, errors.New("ID not found")
-	}
+// func (s *service) Update(id int, input Inputan) (Anggota, error) {
+// 	user, err := s.repository.ReadById(id)
+// 	if err != nil {
+// 		return user, err
+// 	}
+// 	if user.ID == 0 {
+// 		return user, errors.New("ID not found")
+// 	}
 
-	res.ID = id
-	res.NamaLengkap = input.NamaLengkap
-	res.Username = input.Username
-	res.Password = input.Password
-	res.NoHp = input.NoHp
-	res.TanggalMasuk = time.Now()
-	res.Status = input.Status
+// 	user.ID = id
+// 	user.NamaLengkap = input.NamaLengkap
+// 	user.Username = input.Username
+// 	user.Password = input.Password
+// 	user.NoHp = input.NoHp
+// 	user.TanggalMasuk = time.Now()
+// 	user.Status = input.Status
 
-	res, err = s.repository.Update(res)
-	if err != nil {
-		return res, err
-	}
+// 	user, err = s.repository.Update(user)
+// 	if err != nil {
+// 		return user, err
+// 	}
 
-	return res, nil
-}
+// 	return user, nil
+// }

@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type IRepository interface {
 	Save(data Anggota) (Anggota, error)
 	ReadAll() ([]Anggota, error)
-	ReadById(id int) (Anggota, error)
+	ReadById(id int) ([]Anggota, error)
 	ReadByUsername(username string) (Anggota, error)
 	Update(data Anggota) (Anggota, error)
 	// Delete(data Anggota) (Anggota, error)
@@ -39,8 +39,8 @@ func (r *repository) ReadAll() ([]Anggota, error) {
 	return data, nil
 }
 
-func (r *repository) ReadById(id int) (Anggota, error) {
-	var data Anggota
+func (r *repository) ReadById(id int) ([]Anggota, error) {
+	var data []Anggota
 
 	err := r.DB.Where("id = ?", id).Find(&data).Error
 	if err != nil {
